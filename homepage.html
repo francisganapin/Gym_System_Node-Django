@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Members</title>
+    <style>
+
+body{
+    background-color: aquamarine;
+}
+        /* Container for the whole table */
+.table-container {
+    width: 100%;
+    max-width: 1200px; /* Adjust as needed */
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Style for the table heading */
+.table-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Basic table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+/* Style for table headers */
+table th {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+/* Style for table cells */
+table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+/* Style for scrollable table container */
+.scrollable-table-container {
+    max-height: 400px; /* Adjust as needed */
+    overflow-y: auto;
+}
+
+/* Optional: Add alternating row colors for better readability */
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Style for the search input (if needed) */
+.table-container input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+    </style>
+</head>
+<body>
+
+
+
+<body>
+
+    <div class="table-container">
+    <h2>Members List</h2>
+    <!-- Search input outside of table -->
+    <table >
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID Card</th>
+                <th>Expiry</th>
+                <th>Membership</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+     
+</table>
+
+<div class="scrollable-table-container">
+  <table id="data-table">
+        <tbody id="data-body">
+            <!-- Data will be populated here -->
+        </tbody>
+
+    </table>
+</div>
+    
+</body>
+</html>
+<script>
+    fetch('http://127.0.0.1:8000/api/members/')
+  .then(response => response.json())  // Parse the JSON response
+  .then(data => {
+      console.log(data);  // Check the parsed JSON object
+      // Handle the data
+  })
+  .catch(error => console.error('Error:', error));
+</script>
+
+<script>
+    async function fetchData() {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/members/');
+        const result = await response.json();
+        
+        // Print the result to the console
+        console.log('Fetch result:', result);
+     
+        if (result.success) {
+          const rows = result.data.map(item => {
+            return `
+             <tr>
+                <td class="px-4 py-4 whitespace-nowrap">${item.id || 'N/A'}</td>
+                <td class="px-5 py-4 whitespace-nowrap">${item.id_card || 'N/A'}</td>
+                <td class="px-5 py-4 whitespace-nowrap">${item.expiry || 'N/A'}</td>
+                <td class="px-5 py-4 whitespace-nowrap">${item.membership || 'N/A'}</td>
+                <td class="px-5 py-4 whitespace-nowrap">${item.first_name || 'N/A'}</td>
+                <td class="px-5 py-4 whitespace-nowrap">${item.last_name || 'N/A'}</td>
+                <td class="px-5 py-4 whitespace-nowrap">${item.phone_number || 'N/A'}</td>
+              </tr>
+            `;dgfgfgf
+          }).join('');
+          // Insert the item information into the data-body tbody
+          document.getElementById('data-body').innerHTML = rows;
+        } else {
+          alert(result.message);
+          console.log(result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while fetching the item data.');
+      }
+    }
+  
+    // Call fetchData function to load the data when the page loads
+
+    fetchData();
+  </script>
