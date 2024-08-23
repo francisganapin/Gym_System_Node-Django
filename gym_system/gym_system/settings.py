@@ -26,8 +26,6 @@ SECRET_KEY = "django-insecure-!_&luyu7#63h%o$n+ptsgk!$vapez)c=k!_+5mn%&=%jxqfj+t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -55,6 +53,15 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:3000',
+]
+
+
 ROOT_URLCONF = "gym_system.urls"
 STATIC_URL = '/static/'
 
