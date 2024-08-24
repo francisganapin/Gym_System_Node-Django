@@ -28,3 +28,9 @@ class RegisterFormClass(forms.ModelForm):
         model = gym_classes
         fields = ['class_name','class_type','class_day','class_hour','trainor_name']
      
+
+
+class RegisterFormTrainor(forms.ModelForm):
+    class Meta:
+         model = gym_trainor
+         fields = ['trainor_id','first_name','last_name','specialty','phone_number']

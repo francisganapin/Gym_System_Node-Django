@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Member</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+
+    .body-background {
+      background: #4070f4;
+      min-height: 100vh;
+    }
+    .input-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .input-container i {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      color: #4070f4;
+    }
+
+    .input-container input {
+      padding-left: 2.5rem;
+    }
+  </style>
+
+<div id="navbar"></div>
+
+<body class="body-background">
+
+
+
+ <!-- Registration Form -->
+ <form id="registration-form">
+  <div class="form-group">
+    <input type="text" name="id_card" placeholder="Enter ID" required>
+    <div class="icon">
+      <i class="fas fa-id-badge"></i>
+    </div>
+  </div>
+  <div>
+    <input type="submit" value="Submit" class="btn">
+  </div>
+</form>
+
+
+</html>
+
+
+
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
+
+
+document.getElementById('registration-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    // Create FormData object
+    const formData = new FormData(this);
+    
+    // Convert FormData to JSON
+    const data = Object.fromEntries(formData.entries());
+    
+    // Print to console for debugging
+    console.log("Form data being sent:", data);
+
+    const csrftoken = getCookie('csrftoken');
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/login/member', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert(result.message);
+            // Optional: Clear the form or do something else on success
+        } else {
+            alert(result.message);
+            console.error('Form validation errors:', result.errors);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while registering the member.');
+    }
+});
+
+
+  
+</script>
+
+

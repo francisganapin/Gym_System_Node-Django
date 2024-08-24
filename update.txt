@@ -1,0 +1,8 @@
+8/24/2024
+	-updated with login 
+	-updated with register member
+	-delete member
+	-show login when they login
+
+8/23/2024
+    -updated register class

@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from .models import gym_members,gym_trainor
 from django.core.serializers import serialize
-from .forms import RegisterFormMember,RegisterFormClass
+from .forms import RegisterFormMember, RegisterFormClass, RegisterFormTrainor
 import json
 from django.views.decorators.csrf import csrf_exempt
 import mysql.connector
@@ -23,6 +23,32 @@ class DateEncoder(json.JSONEncoder):
             return obj.isoformat()
         return super(DateEncoder, self).default(obj)
 
+def showMember_views(request):
+    members = gym_members.objects.all()
+
+    # Convert QuerySet to list of dictionaries
+    member_list = [
+        {
+            'id': member.pk,
+            'id_card': member.id_card,
+            'expiry': member.expiry.isoformat() if isinstance(member.expiry, date) else member.expiry,
+            'membership': member.membership,
+            'first_name': member.first_name,
+            'last_name': member.last_name,
+            'phone_number': member.phone_number,
+            'address': member.address
+        }
+        for member in members
+    ]
+
+    # Construct the response dictionary
+    response_data = {
+        "success": True,
+        "data": member_list
+    }
+
+    # Serialize the list to JSON using the DateEncoder
+    return JsonResponse(response_data, encoder=DateEncoder)
 
 
 @csrf_exempt
@@ -110,6 +136,38 @@ def deleteMember_views(request):
 
 
 
+@csrf_exempt 
+def loginMember_views(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            id_card = data.get('id_card')
+            connection = mysql.connector.connect(**config_server)
+            cursor = connection.cursor()
+
+
+            cursor.execute('SELECT COUNT(*) FROM gym_members WHERE id_card=%s', [id_card])
+            result = cursor.fetchone()
+
+            #if member is not exist say member does not exist
+            if result[0] == 0: 
+       
+                return JsonResponse({'success': False, 'message': f'Member does not exist'})
+
+            
+            # select expiry
+            cursor.execute('SELECT expiry FROM gym_members WHERE id_card=%s', [id_card])
+            expiry = cursor.fetchone()
+
+            # select expiry result
+            expiry_result = expiry[0] if expiry else 'N/A'
+
+            return JsonResponse({'success': True, 'message': f'Member expiry was {expiry_result}'})
+        
+        except mysql.connector.Error as err:
+            return JsonResponse({'success': False, 'message': f'Database error: {err}'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
 
 @csrf_exempt
@@ -135,45 +193,7 @@ def registerClass_views(request):
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
 
-            
-
-
-
-
-
-
-
-
-def showMember_views(request):
-    members = gym_members.objects.all()
-
-    # Convert QuerySet to list of dictionaries
-    member_list = [
-        {
-            'id': member.pk,
-            'id_card': member.id_card,
-            'expiry': member.expiry.isoformat() if isinstance(member.expiry, date) else member.expiry,
-            'membership': member.membership,
-            'first_name': member.first_name,
-            'last_name': member.last_name,
-            'phone_number': member.phone_number,
-            'address': member.address
-        }
-        for member in members
-    ]
-
-    # Construct the response dictionary
-    response_data = {
-        "success": True,
-        "data": member_list
-    }
-
-    # Serialize the list to JSON using the DateEncoder
-    return JsonResponse(response_data, encoder=DateEncoder)
-
-
-
-
+        
 def showTrainor_views(request):
     trainor = gym_trainor.objects.all()
 
@@ -196,3 +216,27 @@ def showTrainor_views(request):
     }
 
     return JsonResponse(response_data)
+
+
+@csrf_exempt
+def registerTrainor_views(request):
+    if request.method == 'POST':
+        try:
+            # Parse the JSON data
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid JSON data'})
+        
+        # Initialize the form with parsed JSON data
+        form = RegisterFormTrainor(data)
+        
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'message': 'Register Member was Sucessfull successful'})
+        else:
+            # For debugging: Print form errors
+            print("Form validation errors:", form.errors)
+            return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
