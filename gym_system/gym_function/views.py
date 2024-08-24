@@ -4,16 +4,25 @@ from django.core.serializers import serialize
 from .forms import RegisterFormMember,RegisterFormClass
 import json
 from django.views.decorators.csrf import csrf_exempt
-
+import mysql.connector
 from datetime import date
 
 
+
+#this will config to our server 
+config_server = {
+    'host':"localhost",  
+    'user':'root',  
+    'password':'root', 
+    'database':'memberdb'
+}
 
 class DateEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, date):
             return obj.isoformat()
         return super(DateEncoder, self).default(obj)
+
 
 
 @csrf_exempt
@@ -37,6 +46,37 @@ def registerMember_views(request):
             return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+@csrf_exempt 
+def updateMember_views(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            id_card = data.get('id_card')
+            expiry = data.get('expiry')
+            
+            connection = mysql.connector.connect(**config_server)
+            cursor = connection.cursor()
+
+            #check if member exist
+            cursor.execute('SELECT COUNT(*) FROM gym_members WHERE id_card=%s', [id_card])
+            result = cursor.fetchone()
+
+            #if member is not exist say member does not exist
+            if result[0] == 0: 
+                return JsonResponse({'success': False, 'message': 'Member does not exist'})
+
+            # Proceed with the update if the member exists
+            cursor.execute('UPDATE gym_members SET expiry=%s WHERE id_card=%s', [expiry, id_card])
+            connection.commit()  # Commit the transaction
+
+            return JsonResponse({'success': True, 'message': 'Member updated successfully'})
+        
+        except mysql.connector.Error as err:
+            return JsonResponse({'success': False, 'message': f'Database error: {err}'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
 
 
 @csrf_exempt
@@ -63,6 +103,7 @@ def registerClass_views(request):
 
 
             
+
 
 
 
