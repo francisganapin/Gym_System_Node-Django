@@ -41,3 +41,14 @@ class gym_classes(models.Model):
     
      class Meta:
         db_table = 'gym_classes'
+
+
+class gym_item(models.Model):
+    item_name = models.CharField(max_length=255)
+    stock = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+    supplier = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=255)
+
+    class Meta:
+        db_table ='gym_item'

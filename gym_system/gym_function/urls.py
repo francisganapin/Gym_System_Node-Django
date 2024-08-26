@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import registerItem_views,deleteItem_views,updateItem_views,registerTrainor_views,loginMember_views,showMember_views,showTrainor_views,registerMember_views,registerClass_views, updateMember_views,deleteMember_views
+from .views import showClass_view,showItem_views,registerItem_views,deleteItem_views,updateItem_views,registerTrainor_views,loginMember_views,showMember_views,showTrainor_views,registerMember_views,registerClass_views, updateMember_views,deleteMember_views
 
 urlpatterns = [
             #member
@@ -18,11 +18,13 @@ urlpatterns = [
 
 
     #
+    path('api/inventory/show',showItem_views,name='showItem_views'),
     path('api/inventory/update',updateItem_views,name='updateItem_views'),
     path('api/inventory/delete',deleteItem_views,name='deleteItem_views'),
     path('api/inventory/insert',registerItem_views,name='registerItem_views'),
 
     # all about class 
+    path('api/show/class',showClass_view,name='showClass_view'),
     path('api/register/class',registerClass_views,name='registerClass_views')
 ]
 

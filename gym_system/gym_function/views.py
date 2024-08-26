@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from .models import gym_members,gym_trainor
+from .models import gym_members,gym_trainor,gym_item,gym_classes
 from django.core.serializers import serialize
 from .forms import RegisterFormMember, RegisterFormClass, RegisterFormTrainor
 import json
@@ -240,6 +240,26 @@ def registerTrainor_views(request):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
+def showItem_views(request):
+    gym_items_inventory = gym_item.objects.all()
+
+    gym_item_list =[
+        {
+        'id':gym_items.pk,
+        'item_name':gym_items.item_name,
+        'stock':gym_items.stock,
+        'description':gym_items.description,
+        'supplier':gym_items.supplier,
+        'phone_number':gym_items.phone_number
+        }
+        for gym_items in gym_items_inventory
+        ]
+    response_data  = {
+        'success':True,
+        'data':gym_item_list
+    }
+    return JsonResponse(response_data)
+
 @csrf_exempt 
 def registerItem_views(request):
     if request.method == 'POST':
@@ -250,13 +270,14 @@ def registerItem_views(request):
             description = data.get('description')
             supplier = data.get('supplier')
             phone_number = data.get('phone_number')
+
             
             connection = mysql.connector.connect(**config_server)
             cursor = connection.cursor()
 
          
             # Proceed with the update if the member exists
-            cursor.execute('INSERT INTO gym_item item_name=%s stock=%s  description =%s supplier =%s phone_number = %s', [item_name,stock,description,supplier,phone_number])
+            cursor.execute('INSERT INTO gym_item (item_name,stock,description,supplier,phone_number) VALUES(%s,%s,%s,%s,%s)', [item_name,stock,description,supplier,phone_number])
             connection.commit()  # Commit the transaction
 
             return JsonResponse({'success': True, 'message': f'item was into {item_name} successfully'})
@@ -265,47 +286,6 @@ def registerItem_views(request):
             return JsonResponse({'success': False, 'message': f'Database error: {err}'})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
-
-
-
-
-
-
-
-
-
-
-
-@csrf_exempt 
-def updateItem_views(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            item_name = data.get('item_name')
-            stock = data.get('stock')
-            
-            connection = mysql.connector.connect(**config_server)
-            cursor = connection.cursor()
-
-            #check if member exist
-            cursor.execute('SELECT COUNT(*) FROM gym_item WHERE item_name=%s', [item_name])
-            result = cursor.fetchone()
-
-            #if member is not exist say member does not exist3
-            if result[0] == 0: 
-                return JsonResponse({'success': False, 'message': 'Item does not exist'})
-
-            # Proceed with the update if the member exists
-            cursor.execute('UPDATE gym_item SET stock=%s WHERE item_name=%s', [stock, item_name])
-            connection.commit()  # Commit the transaction
-
-            return JsonResponse({'success': True, 'message': f'item was into {stock} successfully'})
-        
-        except mysql.connector.Error as err:
-            return JsonResponse({'success': False, 'message': f'Database error: {err}'})
-    else:
-        return JsonResponse({'success': False, 'message': 'Invalid request method'})
-
 
 
 
@@ -368,3 +348,28 @@ def deleteItem_views(request):
             return JsonResponse({'success': False, 'message': f'Database error: {err}'})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    
+
+
+
+def showClass_view(request):
+    classes_gym = gym_classes.objects.all()
+
+    gym_classes_list = [
+        {
+            'id': class_gym.pk,
+            'class_name': class_gym.class_name,
+            'class_type':class_gym.class_type,
+            'class_day': class_gym.class_day,
+            'class_hour': class_gym.class_hour,
+            'trainor_name': class_gym.trainor_name
+        }
+        for class_gym in classes_gym
+    ]
+
+    response_data = {
+        'success': True,
+        'data': gym_classes_list
+    }
+
+    return JsonResponse(response_data)

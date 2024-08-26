@@ -1,0 +1,61 @@
+
+<table>
+    <thead>
+        <tr>
+            <th>item</th>
+            <th>stocks</th>
+            <th>description</th>
+            <th>supplier</th>
+            <th>Phone</th>
+        </tr>
+    </thead>
+    <tbody id="trainor_list">
+        <!-- Data will be inserted here -->
+    </tbody>
+</table>
+</table>
+
+
+
+<script>
+    async function trainorData() {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/inventory/show', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            console.log(response);
+            
+            const result = await response.json();
+            console.log(result);
+            if (result.success) {
+                const trainers = result.data.map(item => {
+                    return `
+                        <tr>
+                            <td class="trainor-id"> ${item.item_name || 'N/A'}</td>
+                            <td class="first-name">${item.stock || 'N/A'}</td>
+                            <td class="last-name">${item.description || 'N/A'}</td>
+                            <td class="specialty">${item.supplier || 'N/A'}</td>
+                            <td class="phone">${item.phone_number || 'N/A'}</td>
+                       <tr>
+                    `;
+                }).join('');
+
+                // Insert the trainer information into the trainer-list div
+                document.getElementById('trainor_list').innerHTML = trainers;
+            } else {
+                alert(result.message || 'Failed to load trainer data.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while fetching the trainer data.');
+        }
+    }
+
+    // Call the function to fetch and display the data
+    trainorData();
+</script>
+
