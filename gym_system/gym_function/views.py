@@ -240,6 +240,72 @@ def registerTrainor_views(request):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
+@csrf_exempt 
+def registerItem_views(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            item_name = data.get('item_name')
+            stock = data.get('stock')
+            description = data.get('description')
+            supplier = data.get('supplier')
+            phone_number = data.get('phone_number')
+            
+            connection = mysql.connector.connect(**config_server)
+            cursor = connection.cursor()
+
+         
+            # Proceed with the update if the member exists
+            cursor.execute('INSERT INTO gym_item item_name=%s stock=%s  description =%s supplier =%s phone_number = %s', [item_name,stock,description,supplier,phone_number])
+            connection.commit()  # Commit the transaction
+
+            return JsonResponse({'success': True, 'message': f'item was into {item_name} successfully'})
+        
+        except mysql.connector.Error as err:
+            return JsonResponse({'success': False, 'message': f'Database error: {err}'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
+
+
+
+
+
+
+
+
+
+@csrf_exempt 
+def updateItem_views(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            item_name = data.get('item_name')
+            stock = data.get('stock')
+            
+            connection = mysql.connector.connect(**config_server)
+            cursor = connection.cursor()
+
+            #check if member exist
+            cursor.execute('SELECT COUNT(*) FROM gym_item WHERE item_name=%s', [item_name])
+            result = cursor.fetchone()
+
+            #if member is not exist say member does not exist3
+            if result[0] == 0: 
+                return JsonResponse({'success': False, 'message': 'Item does not exist'})
+
+            # Proceed with the update if the member exists
+            cursor.execute('UPDATE gym_item SET stock=%s WHERE item_name=%s', [stock, item_name])
+            connection.commit()  # Commit the transaction
+
+            return JsonResponse({'success': True, 'message': f'item was into {stock} successfully'})
+        
+        except mysql.connector.Error as err:
+            return JsonResponse({'success': False, 'message': f'Database error: {err}'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
 
 
 
