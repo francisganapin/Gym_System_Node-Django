@@ -1,4 +1,8 @@
 8/26/2024
+	-delete trainor
+	-delete classes
+
+8/26/2024
 	-added class list 
 	- we already have ability to add item
 

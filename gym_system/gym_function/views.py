@@ -169,31 +169,7 @@ def loginMember_views(request):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
-
-@csrf_exempt
-def registerClass_views(request):
-    if request.method == 'POST':
-        try:
-            # Parse the JSON data
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Invalid JSON data'})
-        
-        # Initialize the form with parsed JSON data
-        form = RegisterFormClass(data)
-        
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True, 'message': 'Register class successful'})
-        else:
-            # For debugging: Print form errors
-            print("Form validation errors:", form.errors)
-            return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
-    else:
-        return JsonResponse({'success': False, 'message': 'Invalid request method'})
-
-
-        
+    
 def showTrainor_views(request):
     trainor = gym_trainor.objects.all()
 
@@ -239,6 +215,39 @@ def registerTrainor_views(request):
             return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    
+
+
+
+@csrf_exempt
+def deleteTrainor_views(request):
+        if request.method == 'POST':
+            try:
+                data = json.loads(request.body)
+                trainor_id = data.get('trainor_id')
+                connection = mysql.connector.connect(**config_server)
+                cursor = connection.cursor()
+
+                cursor.execute('SELECT COUNT(*) FROM gym_trainor WHERE trainor_id=%s',[trainor_id])
+                result = cursor.fetchone()
+
+                if result[0] == 0:
+                    return JsonResponse({'success':False,'message':'Trainor does not exist'})
+                
+                cursor.execute('DELETE FROM gym_trainor WHERE trainor_id=%s',[trainor_id])
+
+                return JsonResponse({'success': True, 'message': 'Trainor deleted successfully'})
+        
+            except mysql.connector.Error as err:
+                return JsonResponse({'success': False, 'message': f'Database error: {err}'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
+
+
+
+
 
 def showItem_views(request):
     gym_items_inventory = gym_item.objects.all()
@@ -373,3 +382,57 @@ def showClass_view(request):
     }
 
     return JsonResponse(response_data)
+
+
+
+@csrf_exempt
+def registerClass_views(request):
+    if request.method == 'POST':
+        try:
+            # Parse the JSON data
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid JSON data'})
+        
+        # Initialize the form with parsed JSON data
+        form = RegisterFormClass(data)
+        
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'message': 'Register class successful'})
+        else:
+            # For debugging: Print form errors
+            print("Form validation errors:", form.errors)
+            return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    
+
+
+
+@csrf_exempt
+def deleteClass_views(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            class_name = data.get('class_name')
+
+            connection = mysql.connector.connect(**config_server)
+            cursor = connection.cursor()
+
+            cursor.execute('SELECT COUNT(*) FROM gym_classes WHERE class_name=%s',[class_name])
+            result = cursor.fetchone()
+
+            if result[0] == 0:
+                return JsonResponse({'success':False,'message':'Class does not exist'})
+            
+            cursor.execute('DELETE FROM gym_classes WHERE class_name = %s', (class_name,))
+
+            connection.commit()
+            return JsonResponse({'success': True, 'message': f'Class was delete {class_name} successfully'})
+        
+        except mysql.connector.Error as err:
+            return JsonResponse({'success': False, 'message': f'Database error: {err}'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    
