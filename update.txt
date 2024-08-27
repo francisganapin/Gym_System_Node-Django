@@ -1,3 +1,7 @@
+8/26/2024
+	-added class list 
+	- we already have ability to add item
+
 8/25/2024
 	-update inventory
 	-delete inventory item
