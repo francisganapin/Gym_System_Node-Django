@@ -4,7 +4,7 @@ from .views import deleteClass_views,deleteTrainor_views,showClass_view,showItem
 urlpatterns = [
             #member
     path('api/register/member',registerMember_views,name='registerMember_views'),
-    path('api/members/', showMember_views, name='show_members'),
+    path('api/list/member', showMember_views, name='show_members'),
     path('api/delete/member',deleteMember_views,name='deleteMember_views'),
     path('api/update/member',updateMember_views,name='updateMember_views'),
     path('api/login/member',loginMember_views,name='loginMember_views'),

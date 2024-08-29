@@ -1,3 +1,7 @@
+8/29/2024 
+	-update for html and css design
+	-update table we have
+
 8/26/2024
 	-delete trainor
 	-delete classes
