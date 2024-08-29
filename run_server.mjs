@@ -1,6 +1,6 @@
 import { createServer } from 'http';
-import { readFile } from 'fs/promises';  // Importing from 'fs/promises'
-import { join, extname } from 'path';  // Using ES module syntax for 'path'
+import { readFile } from 'fs/promises';
+import { join, extname } from 'path';
 
 const mimeTypes = {
   '.html': 'text/html',
@@ -14,41 +14,73 @@ const mimeTypes = {
 
 const server = createServer(async (req, res) => {
   let filePath;
+
   if (req.url === '/' || req.url === '/homepage' || req.url === '/homepage.html') {
     filePath = join(process.cwd(), 'project/homepage.html');
+  
+  } else if (req.url.startsWith('/css') || req.url.startsWith('/scripts') || req.url.startsWith('/images')) {
+    filePath = join(process.cwd(), 'project', req.url);
 
-    //member page start
+
+
+  
+  //member link  start 
+  } else if (req.url === '/member/list') {
+    filePath = join(process.cwd(), 'project/member/list_member.html');
+
   } else if (req.url === '/member/login') {
     filePath = join(process.cwd(), 'project/member/login_member.html');
   
   } else if (req.url === '/member/register') {
     filePath = join(process.cwd(), 'project/member/register_member.html');
-  
+
   } else if (req.url === '/member/delete') {
     filePath = join(process.cwd(), 'project/member/delete_member.html');
 
   } else if (req.url === '/member/update') {
     filePath = join(process.cwd(), 'project/member/update_member.html');
-    //member page end
+ //member link  end
 
-  } else if (req.url === '/trainor') {
-    filePath = join(process.cwd(), 'proejct/trainor/trainor.html');
+
+  //trainor link
+  } else if (req.url === '/trainor/list') {
+    filePath = join(process.cwd(), 'project/trainor/trainor_list.html');
+
   } else if (req.url === '/trainor/delete') {
-    
+    filePath = join(process.cwd(), 'project/trainor/trainor_delete.html');
 
-    filePath = join(process.cwd(), 'proejct/trainor/trainor_delete.html');
   } else if (req.url === '/trainor/register') {
+    filePath = join(process.cwd(), 'project/trainor/trainor_register.html');
+  //trainor link
 
+   //class link  start 
+  } else if (req.url === '/class/list') {
+    filePath = join(process.cwd(), 'project/class/class_list.html');
 
-    filePath = join(process.cwd(), 'proejct/trainor/trainor_register.html');
-  } else if (req.url === '/register_class') {
+  } else if (req.url === '/class/delete') {
+    filePath = join(process.cwd(), 'project/class/delete_class.html');
+  
+  } else if (req.url === '/class/register') {
+    filePath = join(process.cwd(), 'project/class/register_class.html');
+  //class link end
 
+  
+     //inventory link  start 
+  } else if (req.url === '/inventory/list') {
+      filePath = join(process.cwd(), 'project/inventory/item_list_inventory.html');
+  
+  } else if (req.url === '/inventory/delete') {
+      filePath = join(process.cwd(), 'project/inventory/delete_inventory.html');
+    
+  } else if (req.url === '/inventory/update') {
+      filePath = join(process.cwd(), 'project/inventory/update_inventory.html');
 
-      filePath = join(process.cwd(), 'register_class.html');
+  } else if (req.url === '/inventory/register') {
+      filePath = join(process.cwd(), 'project/inventory/register_inventory.html');
+    //inventory link  end
 
   } else {
-
-    filePath = join(process.cwd(), '404.html'); 
+    filePath = join(process.cwd(), 'project/404.html');
   }
 
   console.log(`Serving file: ${filePath}`);
@@ -65,8 +97,6 @@ const server = createServer(async (req, res) => {
   }
 });
 
-
 server.listen(3000, '127.0.0.1', () => {
   console.log('Listening on http://127.0.0.1:3000');
 });
-
