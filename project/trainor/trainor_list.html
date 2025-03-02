@@ -1,5 +1,21 @@
-<link rel="stylesheet" type="text/css" href="/css/styles.css" />
 
+ 
+  <script>
+    // navbar.js
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch('/homepage')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('navbar').innerHTML = data;
+          // get script
+          const scripts = navbar.querySelectorAll('script');
+          scripts.forEach(script => eval(script.innerText));
+        });
+    });
+  </script>
+
+
+<div id="navbar"></div>
 
 
 

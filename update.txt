@@ -1,3 +1,7 @@
+3/3/2025
+	update navar become global
+	update login it show expiry and name
+
 8/29/2024 
 	-update for html and css design
 	-update table we have
