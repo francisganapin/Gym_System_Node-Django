@@ -220,8 +220,8 @@ def registerTrainor_views(request):
             return JsonResponse({'success': True, 'message': 'Register Member was Sucessfull successful'})
         else:
             # For debugging: Print form errors
-            print("Form validation errors:", form.errors)
-            return JsonResponse({'success': False, 'message': 'Form validation failed', 'errors': form.errors})
+            print("Member is already Exist", form.errors)
+            return JsonResponse({'success': False, 'message': 'Member is already Exist ', 'errors': form.errors})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
     

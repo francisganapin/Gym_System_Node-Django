@@ -21,27 +21,43 @@
 
 <body class="body-background">
 
- <!-- Registration Form -->
- <form id="registration-form">
-<div class="form-container">
-  <div class="form-group">
-    <input type="text" name="id_card" placeholder="Enter ID" required>
-    <div class="icon">
-      <i class="fas fa-id-badge"></i>
+
+<style>
+  .form_container{
+    padding-top:300px 
+  }
+  body{
+    background-color: bisque;
+  }
+</style>
+
+
+<body>
+<div class='form_container'>
+  <div style="width: 50%; margin: 0 auto;">
+    <div class="container full-height d-flex justify-content-center align-items-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header text-center bg-primary text-white">
+            <h4 class="mb-0">Update Form</h4>
+          </div>
+          <div class="card-body">
+            <form id="registration-form">
+              <div class="mb-3">
+                <input type="text" name="id_card" id="idCard" class="form-control" placeholder="Enter ID" required>
+              </div>
+              <div class="mb-3">
+                <input type="date" name="expiry" id="expiry"  class="form-control" value="2024-01-01" min="2024-01-01" max="2030-12-31" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <input type="date" name="expiry" id="expiry" value="2024-01-01" min="2024-01-01" max="2030-12-31" required>
-    <div class="icon">
-      <i class="fas fa-calendar-alt"></i>
-    </div>
-  </div>
-  <div>
-    <input type="submit" value="Submit" class="btn">
   </div>
 </div>
-</form>
-
+</body>
 
 </html>
 
